@@ -32,7 +32,7 @@ export const register = (firstName,lastName,username, password) => {
         };
 
         let url = 'https://localhost:44331/api/users';
-        axios.post(url+'/CreateTestUser', authData)
+        axios.post(url+'/Create', authData)
           .then(response => {
             console.log(response);
             dispatch(registerSuccess( response.data.id));

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 
 import Input from '../../components/UI/Input/Input';
 import Button from '../../components/UI/Button/Button';
@@ -127,7 +128,7 @@ class Product extends Component {
           })
           .then(data => {
               
-            let typesFromApi = data.map(type => { return {value: type.id, display: type.productTypeName} })
+            let typesFromApi = data.map(type => { return {value: type.Id, display: type.ProductTypeName} })
             this.setState({  ProductType: [{value: '', display: 'Select a Product Type'}].concat(typesFromApi) });
             console.log(this.state.ProductType);
   
@@ -141,7 +142,7 @@ class Product extends Component {
           })
           .then(data => {
               
-            let dataFromApi = data.map(cat => { return {value: cat.id, display: cat.productCategoryName} })
+            let dataFromApi = data.map(cat => { return {value: cat.Id, display: cat.ProductCategoryName} })
             this.setState({  ProductCategory: [{value: 0, display: 'Select a Product Category'}].concat(dataFromApi) });
             console.log(this.state.ProductCategory);
   
@@ -179,9 +180,6 @@ class Product extends Component {
           .then(data => {
             let Image = data
             this.setState({  ProductImage: Image });
-            console.log(this.state.ProductImage)
-          }).catch(error => {
-            console.log(error);
           });
           
            
@@ -215,10 +213,11 @@ class Product extends Component {
             }
         };
             this.setState({productForm : UpdatedProduct});
+            
         }
         HandleChange = (e) => {
                
-            this.state.selectedType = e.target.value;
+            this.setState({selectedType : e.target.value});
                 console.log(this.state.selectedType);
                 //validationError: e.target.value === "" ? "You must select your product type" : "";
                 
@@ -242,10 +241,11 @@ class Product extends Component {
             this.state.productForm.Fullfilled.value,
             this.state.productForm.Instock.value,
             this.state.productForm.IsActive.value,
-            this.state.selectedCategory.value,
-            this.state.selectedType.value,
-            this.state.ProductImage.value
+            this.state.selectedCategory,
+            this.state.selectedType,
+            this.state.ProductImage
             );
+            console.log(this.state.selectedType);
             
     }
 
@@ -293,8 +293,8 @@ class Product extends Component {
                 {form}
                 <br/>
                 <select className={classes.Input} className= {classes.InputElement}  value={this.state.selectedType} 
-                onChange={(e)=>this.HandleChange(e)}>
-          {this.state.ProductType.map((type,i) => <option key={i} value={type.value}>{type.display}</option>)}
+                onChange={(e) => this.setState({selectedType: e.target.value, validationError: e.target.value === "" ? "You must select a product type" : ""})}>
+                {this.state.ProductType.map((type,i) => <option key={i} value={type.value}>{type.display}</option>)}
         </select>
         <br/>
         <select className={classes.Input} className= {classes.InputElement}  value={this.state.selectedCategory} 
@@ -305,7 +305,7 @@ class Product extends Component {
                 <input  className={classes.Input} className= {classes.InputElement} type="file" onChange={this.fileChangedHandler} />
                 <button className={classes.Button} onClick={this.uploadHandler}>Upload!</button>
                 <br />
-                <Button btnType= "Success">Add Product </Button>
+                <Button btnType= "Success"> { <Link  to="/product" >Add Product!</Link>} </Button>
               
                 </form>
                 </div>

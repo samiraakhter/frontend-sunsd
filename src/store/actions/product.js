@@ -7,7 +7,7 @@ export const productStart = () => {
     };
 };
 
-export const productSuccess = ( id) => {
+export const productSuccess = (id) => {
     return {
         type: actionTypes.PRODUCT_SUCCESS,
         Id: id
@@ -21,7 +21,7 @@ export const productFail = (error) => {
     };
 };
 
-export const product = (ProductName,Sku,Variants,OnHand,Fullfilled,Instock,IsActive,selectedType,selectedCategory,ProductImage) => {
+export const product = (ProductName,Sku,Variants,OnHand,Fullfilled,Instock,IsActive,selectedCategory,selectedType,ProductImage) => {
     return dispatch => {
         dispatch(productStart());
         const productData = {
@@ -32,8 +32,8 @@ export const product = (ProductName,Sku,Variants,OnHand,Fullfilled,Instock,IsAct
             Fullfilled: Fullfilled,
             Instock: Instock,
             IsActive: IsActive,
-            productTypeIdFk: selectedType,
             ProductCategoryIdFk: selectedCategory,
+            productTypeIdFk: selectedType,
             ProductImage: ProductImage
         };
         console.log(productData);
