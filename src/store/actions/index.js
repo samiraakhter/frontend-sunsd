@@ -1,7 +1,8 @@
 
 export {
     auth,
-    logout
+    logout,
+    authCheckState
 } from './auth';
 
 export {
@@ -11,3 +12,15 @@ export {
 export {
     product
 } from './product';
+
+export {
+    customer
+} from './customer';
+
+export {
+    route
+} from './route';
+
+export {
+    inventory
+} from './inventory';

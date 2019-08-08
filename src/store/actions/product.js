@@ -37,8 +37,8 @@ export const product = (ProductName,Sku,Variants,OnHand,Fullfilled,Instock,IsAct
             ProductImage: ProductImage
         };
         console.log(productData);
+        let url = 'http://localhost:64883/api/Product';
 
-        let url = 'https://localhost:44331/api/Product';
         axios.post(url+'/Create', productData)
           .then(response => {
 

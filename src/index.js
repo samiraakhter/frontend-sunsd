@@ -12,13 +12,19 @@ import * as serviceWorker from './serviceWorker';
 import authReducer from './store/reducers/auth';
 import registerReducer from './store/reducers/register';
 import productReducer from './store/reducers/product';
+import customerReducer from './store/reducers/customer';
+import routeReducer from './store/reducers/route';
+import inventoryReducer from './store/reducers/inventory';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 const rootReducer = combineReducers({
     auth: authReducer,
     register: registerReducer,
-    product: productReducer
+    product: productReducer,
+    customer: customerReducer,
+    route: routeReducer,
+    inventory: inventoryReducer
     
 });
 

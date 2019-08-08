@@ -89,6 +89,7 @@ class Login extends Component {
 
     submitHandler = (event) =>{
             event.preventDefault();
+           
             this.props.onAuth(this.state.controls.username.value,this.state.controls.password.value);
         }
 
@@ -111,7 +112,7 @@ class Login extends Component {
           shouldValidate={formElement.config.validation}
           touched={formElement.config.touched}
           changed={(event) => this.inputChangedHandler(event, formElement.id)} />
-
+        
       ));
 
       if(this.props.loading) {
@@ -138,7 +139,7 @@ class Login extends Component {
       {errorMessage}
           <form onSubmit={this.submitHandler}>
           {form}
-          <Button btnType= "Success">Login</Button>
+          <Button btnType= "Success"> { <Link style={{ color: '#944317' , textDecoration: 'none'}} to="/" >Login</Link>}</Button>
           </form>
           <Button 
           btnType="Danger"> { <Link style={{ color: '#944317' , textDecoration: 'none'}} to="/register" >SWITCH TO SIGN UP</Link>}</Button>
@@ -152,7 +153,8 @@ const mapStateToProps = state => {
     return {
         loading: state.auth.loading,
         error: state.auth.error,
-        isAutheticated: state.auth.token !== null
+        isAutheticated: state.auth.token !== null,
+        token: state.auth.token
     };
 };
 

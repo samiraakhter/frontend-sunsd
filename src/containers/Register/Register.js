@@ -8,6 +8,7 @@ import Button from '../../components/UI/Button/Button';
 import Spinner from '../../components/UI/Spinner/Spinner';
 import classes from './Register.css';
 import * as actions from '../../store/actions/index';
+import Axios from 'axios';
 
 class Register extends Component {
     state ={
@@ -20,6 +21,7 @@ class Register extends Component {
                 },
                 value: '',
                 validation:{
+                    
                     required: true,
                     
                 },
@@ -38,20 +40,7 @@ class Register extends Component {
                 valid: false,
                 touched:false
             },
-            email: {
-                elementType: 'input',
-                elementConfig:{
-                    type: 'email',
-                    placeholder: 'Enter Your Email Here'
-                },
-                value: '',
-                validation:{
-                    required: false,
-                    isEmail:true
-                },
-                valid: false,
-                touched:false
-            },
+            
             username: {
                 elementType: 'input',
                 elementConfig:{
@@ -79,10 +68,88 @@ class Register extends Component {
                 },
                 valid: false,
                 touched:false
-            }
+            },
+
+            ContactNo: {
+                elementType: 'input',
+                elementConfig:{
+                    placeholder: 'Enter Contact Number'
+                },
+                value: '',
+                validation:{
+                    maxLength: 11,
+                    isNumeric:true,
+                    required: true,
+                },
+                valid: false,
+                touched:false
+            },
+
+            Email: {
+                elementType: 'input',
+                elementConfig:{
+                    type: 'email',
+                    placeholder: 'Enter Your Email Here'
+                },
+                value: '',
+                validation:{
+                    required: false,
+                    isEmail:true
+                },
+                valid: false,
+                touched:false
+            },
+
+            ResidentialAddress: {
+                elementType: 'input',
+                elementConfig:{
+                    placeholder: 'Enter Address Here'
+                },
+                value: '',
+                validation:{
+                    required: true,
+                },
+                valid: false,
+                touched:false
+            },
+            IsActive: {
+                elementType: 'select',
+                elementConfig: {
+                    options: [
+                        {key :1,value: null, displayValue: 'IsActive'},
+                        {key :2,value: true, displayValue: 'Yes'},
+                        {key :3,value: false, displayValue: 'No'}
+                    ]
+                },
+                value: 'Is Active',
+                validation: {},
+                valid: true
+            },
+
         },
+        Roles: [],
+        selectedRole:'',
         
     }
+    componentDidMount() {
+        Axios.get("http://localhost:64883/api/Role")
+          .then((response) => {
+            return response.data;
+          })
+          .then(data => {
+              
+            let roles = data.map(role => { return {value: role.Id, display: role.RoleName} })
+            this.setState({  Roles: [{value: '', display: 'Select a Role'}].concat(roles) });
+  
+        }).catch(error => {
+            console.log(error);
+          });
+      }
+
+      HandleChange = (e) => {
+        this.setState({selectedRole : e.target.value});
+        }
+
     checkValidity(value, rules) {
         let isValid = true;
         if (!rules) {
@@ -132,11 +199,18 @@ class Register extends Component {
             this.props.onRegister(this.state.controls.firstName.value,
                 this.state.controls.lastName.value,
                 this.state.controls.username.value,
-                this.state.controls.password.value);
+                this.state.controls.password.value,
+                this.state.controls.ContactNo.value,
+                this.state.controls.Email.value,
+                this.state.controls.ResidentialAddress.value,
+                this.state.controls.IsActive.value,
+                this.state.selectedRole,
+                localStorage.getItem('token'));
         }
         
 
         render(){
+            let attachedClasses = [classes.Input, classes.InputElement];
             const formElementArray = [];
             for (let key in this.state.controls) {
                 formElementArray.push({
@@ -176,10 +250,15 @@ class Register extends Component {
                 {errorMessage}
                     <form onSubmit={this.submitHandler}>
                     {form}
-                    <Button btnType= "Success">Sign Up</Button>
-                  
+                    <br/>  <select className={attachedClasses.join(' ')}  value={this.state.selectedRole} 
+                onChange={(e) => this.setState({selectedRole: e.target.value, validationError: e.target.value === "" ? "You must select a role" : ""})}>
+                {this.state.Roles.map((role,i) => <option key={i} value={role.value}>{role.display}</option>)}
+        </select><br/>
+                   
                     </form>
-                    <Button 
+                    <button className={classes.Button} onClick={this.submitHandler} >{ <Link style={{ color: '#944317' , textDecoration: 'none'}} to="/" >Craete User</Link>}</button>
+                   
+                   <br/> <Button 
                     btnType="Danger"> { <Link style={{ color: '#944317' , textDecoration: 'none'}} to="/login" >SWITCH TO LOGIN</Link>}</Button>
                 
                 </div>
@@ -188,7 +267,7 @@ class Register extends Component {
 }
 const mapDispatchToProps = dispatch => {
     return {
-        onRegister: (firstName,lastName,username, password) => dispatch(actions.register(firstName,lastName,username, password))
+        onRegister: (firstName,lastName,username, password,ContactNo,email,ResidentialAddress,IsActive,selectedRole,Token) => dispatch(actions.register(firstName,lastName,username, password,ContactNo,email,ResidentialAddress,IsActive,selectedRole,Token))
     };
 };
 

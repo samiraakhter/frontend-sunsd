@@ -3,11 +3,12 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import Input from '../../components/UI/Input/Input';
-import Button from '../../components/UI/Button/Button';
 import Spinner from '../../components/UI/Spinner/Spinner';
 import * as actions from '../../store/actions/index';
 import classes from './Product.css';
 import Axios from 'axios';
+// import { Notification } from '@progress/kendo-popups-react-wrapper';
+
 
 
 class Product extends Component {
@@ -48,7 +49,7 @@ class Product extends Component {
                 value: '',
                 validation: {
                     required: true,
-                    isNumeric: true
+                   
                 },
                 valid: false,
                 touched: false
@@ -83,18 +84,19 @@ class Product extends Component {
             },
 
             Instock: {
-                elementType: 'select',
+                elementType: 'input',
                 elementConfig: {
-                    options: [
-                        {key :1,value: null, displayValue: 'Instock'},
-                        {key :2,value: true, displayValue: 'Yes'},
-                        {key :3,value: false, displayValue: 'No'}
-                    ]
-                    
+                    type: 'text',
+                    placeholder: 'Instock'
                 },
-                value: 'Instock',
-                validation: {},
-                valid: true
+                value: '',
+                validation: {
+                    required: true,
+                    isNumeric: true,
+                   
+                },
+                valid: false,
+                touched: false
             },
 
             IsActive: {
@@ -117,12 +119,12 @@ class Product extends Component {
          selectedCategory: '',
         formIsValid: false,
         file: null,
-        ProductImage:"",
+        ProductImage:'',
         validationError: "",
         
     }
     componentDidMount() {
-        Axios.get("https://localhost:44331/api/ProductType")
+        Axios.get("http://localhost:64883/api/ProductType")
           .then((response) => {
             return response.data;
           })
@@ -130,13 +132,12 @@ class Product extends Component {
               
             let typesFromApi = data.map(type => { return {value: type.Id, display: type.ProductTypeName} })
             this.setState({  ProductType: [{value: '', display: 'Select a Product Type'}].concat(typesFromApi) });
-            console.log(this.state.ProductType);
   
         }).catch(error => {
             console.log(error);
           });
 
-          Axios.get("https://localhost:44331/api/ProductCategory")
+          Axios.get("http://localhost:64883/api/ProductCategory")
           .then((response) => {
             return response.data;
           })
@@ -144,7 +145,6 @@ class Product extends Component {
               
             let dataFromApi = data.map(cat => { return {value: cat.Id, display: cat.ProductCategoryName} })
             this.setState({  ProductCategory: [{value: 0, display: 'Select a Product Category'}].concat(dataFromApi) });
-            console.log(this.state.ProductCategory);
   
         }).catch(error => {
             console.log(error);
@@ -164,9 +164,8 @@ class Product extends Component {
           this.state.file,
           this.state.file.name
         )
-        console.log(this.state.file);
-        Axios({
-            url: 'https://localhost:44331/api/Product/Temp',
+              Axios({
+            url: 'http://localhost:64883/api/Product/Temp',
             method: 'POST',
             data: formData,
             headers: {
@@ -176,10 +175,15 @@ class Product extends Component {
           })
           .then((response) => {
             return response.data;
+            
           })
           .then(data => {
             let Image = data
+           
             this.setState({  ProductImage: Image });
+            alert(this.state.ProductImage+ " Uploaded");
+            //this.popUpNotificationWidget.show('success');
+            
           });
           
            
@@ -216,19 +220,13 @@ class Product extends Component {
             
         }
         HandleChange = (e) => {
-               
             this.setState({selectedType : e.target.value});
-                console.log(this.state.selectedType);
-                //validationError: e.target.value === "" ? "You must select your product type" : "";
-                
-                
-
             }
-            HandleChangeCategory = (e) => {
+
+        HandleChangeCategory = (e) => {
                 // this.setState({selectedType: e.target.value, validationError: e.target.value === "" ? "You must select your product type" : ""});
                 // console.log(e);
                 this.state.selectedCategory = e.target.value;
-                console.log(this.state.selectedCategory);
 
             }
 
@@ -245,11 +243,11 @@ class Product extends Component {
             this.state.selectedType,
             this.state.ProductImage
             );
-            console.log(this.state.selectedType);
             
     }
 
     render () {
+        let attachedClasses = [classes.Input, classes.InputElement];
         const formElementsArray = [];
         for (let key in this.state.productForm) {
             formElementsArray.push({
@@ -289,26 +287,28 @@ class Product extends Component {
             <div style={{color: 'red', marginTop: '5px'}}>
           {this.state.validationError}
              </div>
-                <form onSubmit={this.submitHandler}>
+                <form >
                 {form}
                 <br/>
-                <select className={classes.Input} className= {classes.InputElement}  value={this.state.selectedType} 
+                <select className={attachedClasses.join(' ')}  value={this.state.selectedType} 
                 onChange={(e) => this.setState({selectedType: e.target.value, validationError: e.target.value === "" ? "You must select a product type" : ""})}>
                 {this.state.ProductType.map((type,i) => <option key={i} value={type.value}>{type.display}</option>)}
         </select>
         <br/>
-        <select className={classes.Input} className= {classes.InputElement}  value={this.state.selectedCategory} 
+        <select className={attachedClasses.join(' ')}  value={this.state.selectedCategory} 
                 onChange={(e)=>this.HandleChangeCategory(e)}>
           {this.state.ProductCategory.map((cat,i) => <option key={i} value={cat.value}>{cat.display}</option>)}
         </select>
         <br/>
-                <input  className={classes.Input} className= {classes.InputElement} type="file" onChange={this.fileChangedHandler} />
+                </form>
+                <input  className={attachedClasses.join(' ')} type="file" onChange={this.fileChangedHandler} />
                 <button className={classes.Button} onClick={this.uploadHandler}>Upload!</button>
                 <br />
-                <Button btnType= "Success"> { <Link  to="/product" >Add Product!</Link>} </Button>
-              
-                </form>
+
+                <button className={classes.Button} onClick={this.submitHandler}>{ <Link  to="/product" >Add Product!</Link>} </button>
+            
                 </div>
+                
          );
     }
 }
@@ -321,7 +321,9 @@ const mapDispatchToProps = dispatch => {
 const mapStateToProps = state => {
     return {
         loading: state.product.loading,
-        error: state.product.error
+        error: state.product.error,
+        isAutheticated: state.auth.token !== null,
+        token: state.auth.token
     };
 };
 

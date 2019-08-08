@@ -8,6 +8,8 @@ export const authStart = () => {
 };
 
 export const logout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('Id');
     return {
         type: actionTypes.AUTH_LOGOUT
     };
@@ -22,11 +24,13 @@ export const checkAuthTimeout = (expirationTime) => {
 };
 
 export const authSuccess = (token, userId) => {
+    
     return {
         type: actionTypes.AUTH_SUCCESS,
         idToken: token,
         userId: userId
     };
+    
 };
 
 export const authFail = (error) => {
@@ -44,12 +48,15 @@ export const auth = (username, password) => {
             password: password
         };
 
-        let url = 'https://localhost:44331/api/users';
+        let url = 'http://localhost:64883//api/users';
         axios.post(url+'/authenticate', authData)
           .then(response => {
             console.log(response);
-            dispatch(authSuccess(response.data.token, response.data.id));
-            dispatch(checkAuthTimeout(3600000))
+            localStorage.setItem('token',response.data.Token);
+            localStorage.setItem('Id',response.data.Id);
+            dispatch(authSuccess(response.data.Token, response.data.Id));
+            dispatch(checkAuthTimeout(36000000));
+            
           })
           .catch(err =>{
             
@@ -57,3 +64,16 @@ export const auth = (username, password) => {
           });
     };
 };
+
+export const authCheckState = () => {
+        return dispatch => {
+            const token = localStorage.getItem('token');
+            if(!token) {
+                dispatch (logout());
+            }
+            else {
+                const Id = localStorage.getItem('Id');
+                dispatch (authSuccess(token , Id));
+            }
+        }
+}

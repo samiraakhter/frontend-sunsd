@@ -21,17 +21,23 @@ export const registerFail = (error) => {
     };
 };
 
-export const register = (firstName,lastName,username, password) => {
+export const register = (firstName,lastName,username, password,ContactNo,email,ResidentialAddress,IsActive,selectedRole,Token) => {
     return dispatch => {
         dispatch(registerStart());
         const authData = {
-            firstName: firstName,
-            lastName: lastName,
-            username: username,
-            password: password
+            FirstName: firstName,
+            LastName: lastName,
+            Username: username,
+            password: password,
+            ContactNo: ContactNo,
+            Email: email,
+            ResidentialAddress: ResidentialAddress,
+            IsActive: IsActive,
+            RoleId: selectedRole,
+            Token: Token,
         };
-
-        let url = 'https://localhost:44331/api/users';
+        console.log(authData);
+        let url = 'http://localhost:64883/api/Users';
         axios.post(url+'/Create', authData)
           .then(response => {
             console.log(response);
